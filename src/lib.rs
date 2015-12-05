@@ -132,14 +132,14 @@ mod tests {
     #[test]
     fn test_generate() {
         // Base 6
-        let l = Luhn::new("abcdef").expect("valid alphabet");
+        let l = Luhn::new("abcdef").ok().expect("valid alphabet");
 
         match l.generate("abcdef") {
             Ok(ch) => assert_eq!(ch, 'e'),
             Err(e) => panic!("unexpected generate error: {:?}", e),
         };
 
-        let l = Luhn::new("0123456789").expect("valid alphabet");
+        let l = Luhn::new("0123456789").ok().expect("valid alphabet");
 
         match l.generate("7992739871") {
             Ok(ch) => assert_eq!(ch, '3'),
@@ -157,7 +157,7 @@ mod tests {
 
     #[test]
     fn test_invalid_input() {
-        let l = Luhn::new("abcdef").expect("valid alphabet");
+        let l = Luhn::new("abcdef").ok().expect("valid alphabet");
 
         match l.generate("012345") {
             Ok(_) => panic!("unexpected success"),
@@ -167,7 +167,7 @@ mod tests {
 
     #[test]
     fn test_validate() {
-        let l = Luhn::new("abcdef").expect("valid alphabet");
+        let l = Luhn::new("abcdef").ok().expect("valid alphabet");
 
         assert!(l.validate("abcdefe").unwrap());
         assert!(!l.validate("abcdefd").unwrap());
