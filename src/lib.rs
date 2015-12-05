@@ -45,16 +45,14 @@ impl Luhn {
             charset.insert(*ch);
         }
 
-        Ok(Luhn {
-            alphabet: chars,
-        })
+        Ok(Luhn { alphabet: chars })
     }
 
     #[inline]
     fn codepoint_from_character(&self, ch: char) -> Result<usize, LuhnError> {
         match self.alphabet.binary_search(&ch) {
             Ok(idx) => Ok(idx),
-            Err(_)  => Err(LuhnError::InvalidCharacter(ch)),
+            Err(_) => Err(LuhnError::InvalidCharacter(ch)),
         }
     }
 
@@ -68,7 +66,7 @@ impl Luhn {
     /// Returns an error if the input string is empty, or contains a character
     /// that is not in the input alphabet.
     pub fn generate<S>(&self, s: S) -> Result<char, LuhnError>
-    where S: AsRef<str>
+        where S: AsRef<str>
     {
         let s = s.as_ref();
         if s.len() == 0 {
@@ -105,7 +103,7 @@ impl Luhn {
     /// of the input string is the Luhn character, and it will validate that the
     /// remainder of the string is correct.
     pub fn validate<S>(&self, s: S) -> Result<bool, LuhnError>
-    where S: AsRef<str>
+        where S: AsRef<str>
     {
         let s = s.as_ref();
 
@@ -152,7 +150,7 @@ mod tests {
     #[test]
     fn test_invalid_alphabet() {
         match Luhn::new("abcdea") {
-            Ok(_)  => panic!("unexpected success"),
+            Ok(_) => panic!("unexpected success"),
             Err(e) => assert_eq!(e, LuhnError::NotUnique('a')),
         };
     }
@@ -162,7 +160,7 @@ mod tests {
         let l = Luhn::new("abcdef").expect("valid alphabet");
 
         match l.generate("012345") {
-            Ok(_)  => panic!("unexpected success"),
+            Ok(_) => panic!("unexpected success"),
             Err(e) => assert_eq!(e, LuhnError::InvalidCharacter('0')),
         };
     }
@@ -172,6 +170,6 @@ mod tests {
         let l = Luhn::new("abcdef").expect("valid alphabet");
 
         assert!(l.validate("abcdefe").unwrap());
-        assert!(! l.validate("abcdefd").unwrap());
+        assert!(!l.validate("abcdefd").unwrap());
     }
 }
