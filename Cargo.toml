@@ -2,3 +2,9 @@
 name = "luhn"
 version = "0.0.1"
 authors = ["Andrew Dunham <andrew@du.nham.ca>"]
+
+description = "Luhn generation and validation that supports arbitrary alphabets"
+repository = "https://github.com/andrew-d/luhn-rs"
+readme = "README.md"
+keywords = ["luhn", "checksum"]
+license = "MIT"
