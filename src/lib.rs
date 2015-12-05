@@ -35,6 +35,10 @@ impl Luhn {
     {
         let chars = alphabet.as_ref().chars().collect::<Vec<char>>();
 
+        if chars.len() < 1 {
+            return Err(LuhnError::EmptyString);
+        }
+
         // Validate uniqueness
         let mut charset = HashSet::new();
         for ch in chars.iter() {
@@ -171,5 +175,19 @@ mod tests {
 
         assert!(l.validate("abcdefe").unwrap());
         assert!(!l.validate("abcdefd").unwrap());
+    }
+
+    #[test]
+    fn test_empty_strings() {
+        // Alphabet must have at least one character.
+        assert_eq!(Luhn::new("").unwrap_err(), LuhnError::EmptyString);
+
+        let l = Luhn::new("abcdef").ok().expect("valid alphabet");
+
+        // Cannot generate on an empty string.
+        assert_eq!(l.generate("").unwrap_err(), LuhnError::EmptyString);
+
+        // Cannot validate a string of length 1 (since the last character is the check digit).
+        assert_eq!(l.validate("a").unwrap_err(), LuhnError::EmptyString);
     }
 }
