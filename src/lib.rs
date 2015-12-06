@@ -110,7 +110,6 @@ impl Luhn {
         where S: AsRef<str>
     {
         let s = s.as_ref();
-
         if s.len() <= 1 {
             return Err(LuhnError::EmptyString);
         }
@@ -125,6 +124,21 @@ impl Luhn {
 
         let expected = try!(self.generate(head));
         Ok(luhn == expected)
+    }
+
+    /// Validates a Luhn check character.  This is the same as the `validate`
+    /// method, but allows providing the Luhn check character out-of-band from
+    /// the input to validate.
+    pub fn validate_with<S>(&self, s: S, check: char) -> Result<bool, LuhnError>
+        where S: AsRef<str>
+    {
+        let s = s.as_ref();
+        if s.len() <= 1 {
+            return Err(LuhnError::EmptyString);
+        }
+
+        let expected = try!(self.generate(s));
+        Ok(check == expected)
     }
 }
 
@@ -189,5 +203,13 @@ mod tests {
 
         // Cannot validate a string of length 1 (since the last character is the check digit).
         assert_eq!(l.validate("a").unwrap_err(), LuhnError::EmptyString);
+    }
+
+    #[test]
+    fn test_validate_with() {
+        let l = Luhn::new("abcdef").ok().expect("valid alphabet");
+
+        assert!(l.validate_with("abcdef", 'e').unwrap());
+        assert!(!l.validate_with("abcdef", 'd').unwrap());
     }
 }
