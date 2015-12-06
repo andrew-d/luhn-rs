@@ -261,7 +261,7 @@ mod tests {
                             .collect::<String>();
 
             // Validate that this succeeds.
-            let l = Luhn::new(&alphabet).expect("invalid alphabet given");
+            let l = Luhn::new(&alphabet).ok().expect("valid alphabet");
             if let Err(e) = l.generate(&input) {
                 println!("Alphabet = {}", alphabet);
                 println!("Input = {}", input);
