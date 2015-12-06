@@ -11,7 +11,7 @@ Add this to your `Cargo.toml`:
 
 ```
 [dependencies]
-luhn = "0.0.1"
+luhn-rs = "0.0.1"
 ```
 
 Then, in your crate:
