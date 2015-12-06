@@ -11,3 +11,6 @@ license = "MIT"
 
 [lib]
 name = "luhn"
+
+[dev-dependencies]
+rand = "0.3"

@@ -18,7 +18,7 @@ fn main() {
         Err(e) => {
             println!("Error creating Luhn: {:?}", e);
             return;
-        },
+        }
     };
 
     let ch = match l.generate(&args[2]) {
@@ -26,7 +26,7 @@ fn main() {
         Err(e) => {
             println!("Error generating check digit: {:?}", e);
             return;
-        },
+        }
     };
 
     println!("The check digit is: {}", ch);

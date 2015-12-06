@@ -33,11 +33,13 @@ impl Luhn {
     pub fn new<S>(alphabet: S) -> Result<Luhn, LuhnError>
         where S: AsRef<str>
     {
-        let chars = alphabet.as_ref().chars().collect::<Vec<char>>();
-
+        let mut chars = alphabet.as_ref().chars().collect::<Vec<char>>();
         if chars.len() < 1 {
             return Err(LuhnError::EmptyString);
         }
+
+        // Need to sort so binary_search works.
+        chars.sort();
 
         // Validate uniqueness
         let mut charset = HashSet::new();
@@ -79,7 +81,7 @@ impl Luhn {
 
         let mut factor = 1;
         let mut sum = 0;
-        let n = s.len();
+        let n = self.alphabet.len();
 
         // Note: this is by-and-large a transliteration of the algorithm in the
         // Wikipedia article into Rust:
@@ -145,6 +147,10 @@ impl Luhn {
 
 #[cfg(test)]
 mod tests {
+    extern crate rand;
+
+    use self::rand::{Isaac64Rng, Rng, SeedableRng, sample, thread_rng};
+
     use super::{Luhn, LuhnError};
 
     #[test]
@@ -211,5 +217,56 @@ mod tests {
 
         assert!(l.validate_with("abcdef", 'e').unwrap());
         assert!(!l.validate_with("abcdef", 'd').unwrap());
+    }
+
+    #[test]
+    fn test_longer_input() {
+        // This test caught an out-of-bounds error.
+        let l = Luhn::new("abcdef").ok().expect("valid alphabet");
+        let _ = l.generate("aabbccdd");
+    }
+
+    #[test]
+    fn test_random_input() {
+        const NUM_TESTS: usize = 10000;
+        const PRINTABLE: &'static str = "0123456789abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTU\
+                                         VWXYZ";
+        let printable_chars = PRINTABLE.chars().collect::<Vec<char>>();
+
+        // Generate a random seed and print it
+        let seed: u64 = thread_rng().gen();
+        println!("Seed for this run: {}", seed);
+
+        // Create the seedable RNG with this seed.
+        let mut rng = Isaac64Rng::from_seed(&[seed]);
+
+        for i in 1..NUM_TESTS {
+            // Generate a random alphabet size
+            let alphabet_size: u8 = rng.gen_range(1, printable_chars.len() as u8);
+
+            // Create the alphabet by taking this many characters from our
+            // printable characters Vec.
+            let chars = sample(&mut rng, &printable_chars, alphabet_size as usize)
+                            .into_iter()
+                            .cloned()
+                            .collect::<Vec<char>>();
+            let alphabet = chars.iter().cloned().collect::<String>();
+
+            // Generate a random input length.
+            let input_length: u16 = rng.gen_range(1, 1024);
+
+            // Generate this many random characters.
+            let input = (0..input_length)
+                            .map(|_| *rng.choose(&*chars).unwrap())
+                            .collect::<String>();
+
+            // Validate that this succeeds.
+            let l = Luhn::new(&alphabet).expect("invalid alphabet given");
+            if let Err(e) = l.generate(&input) {
+                println!("Alphabet = {}", alphabet);
+                println!("Input = {}", input);
+                panic!("{}: Unexpected error: {:?}", i, e);
+            }
+        }
     }
 }
