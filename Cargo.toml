@@ -13,4 +13,4 @@ license = "MIT"
 name = "luhn"
 
 [dev-dependencies]
-rand = "0.3"
+rand = "0.3, < 0.3.18"
