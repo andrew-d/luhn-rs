@@ -14,3 +14,4 @@ name = "luhn"
 
 [dev-dependencies]
 rand = "0.3, < 0.3.18"
+libc = "0.2, < 0.2.41"
