@@ -1,0 +1,1 @@
+initSidebarItems({"enum":[["LuhnError","The error type for this crate."]],"struct":[["Luhn","Luhn represents a thing that can generate or validate the Luhn character for a given input."]]});
