@@ -28,7 +28,7 @@ Generating a check digit:
 // The alphabet given dictates what input characters are allowed.
 let l = Luhn::new("abcdef").expect("invalid alphabet given");
 
-let ch = l.generate("abcdef") {
+let ch = match l.generate("abcdef") {
     Ok(ch) => ch,
     Err(e) => panic!("unexpected generate error: {:?}", e),
 };
